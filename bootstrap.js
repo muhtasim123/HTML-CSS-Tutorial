@@ -51,8 +51,8 @@ function jokeCardCreator(jokeString){
 function setup(){
     //add all event listeners
     let buyJokeButton = document.querySelector(".button-container button");
-    buyJokeButton.addEventListener("click", ()=>{
-        let joke = "There is no chin behind Chuck Norris' beard, only another first";
+    buyJokeButton.addEventListener("click", async ()=>{
+        let joke = await getJokeAsync();
         jokeCardCreator(joke);
     });
     console.log("buton worked");
@@ -60,3 +60,34 @@ function setup(){
     //try setting up an onload event for the html node to call this function
 }
 
+//two methods for getting a joke
+//one with .then and .catch
+//useless function to show how to do it before ES6
+//dont need to use 
+function getJokeDotThen(){
+    let response = fetch("http://api.icndb.com/jokes/random?limitTo=[nerdy]");
+    let dataPromise = response.then((data)=>{
+        return data.json().then((parsedData)=>{
+            return parsedData.value.joke;
+        })
+    }).catch((err)=>{
+        console.log(err);
+    });
+
+    return dataPromise;
+}
+
+//another one with async and await
+
+async function getJokeAsync(){
+    try{
+        //just wait for promise to resolve
+        let response = await fetch("http://api.icndb.com/jokes/random?limitTo=[nerdy]");
+
+        let data = await response.json();
+
+        return data.value.joke;
+    } catch(e){
+        return "Sorry, Chuck Norris roundhoused this joke";
+    }
+}
